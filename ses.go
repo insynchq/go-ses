@@ -1,3 +1,4 @@
+// Copyright 2014 InsyncHQ, Inc.
 // Copyright 2013 SourceGraph, Inc.
 // Copyright 2011-2013 Numrotron Inc.
 // Use of this source code is governed by an MIT-style license
@@ -39,28 +40,10 @@ var EnvConfig = Config{
 	SecretAccessKey: os.Getenv("AWS_SECRET_KEY"),
 }
 
-func (c *Config) SendEmail(from, to, subject, body string) (string, error) {
-	data := make(url.Values)
+func (c *Config) SendEmail(email *Email) (string, error) {
+	data := email.UrlValues()
 	data.Add("Action", "SendEmail")
-	data.Add("Source", from)
-	data.Add("Destination.ToAddresses.member.1", to)
-	data.Add("Message.Subject.Data", subject)
-	data.Add("Message.Body.Text.Data", body)
 	data.Add("AWSAccessKeyId", c.AccessKeyID)
-
-	return sesPost(data, c.AccessKeyID, c.SecretAccessKey)
-}
-
-func (c *Config) SendEmailHTML(from, to, subject, bodyText, bodyHTML string) (string, error) {
-	data := make(url.Values)
-	data.Add("Action", "SendEmail")
-	data.Add("Source", from)
-	data.Add("Destination.ToAddresses.member.1", to)
-	data.Add("Message.Subject.Data", subject)
-	data.Add("Message.Body.Text.Data", bodyText)
-	data.Add("Message.Body.Html.Data", bodyHTML)
-	data.Add("AWSAccessKeyId", c.AccessKeyID)
-
 	return sesPost(data, c.AccessKeyID, c.SecretAccessKey)
 }
 
